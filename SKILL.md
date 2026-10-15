@@ -1,6 +1,8 @@
 ---
 name: reclaim-code-entropy
 description: Find, rank, and implement evidence-backed simplifications of dead or abandoned code, duplicate state/APIs, unnecessary abstractions, and over-engineering. Use for repository simplification, deletion candidates, 代码化简、熵回收、清理冗余、收敛抽象 or 去除过度设计. Prove consumers, compatibility and ownership before removing code. Not a general bug or performance audit.
+metadata:
+  version: "0.2.0"
 ---
 
 # Reclaim Code Entropy
@@ -65,22 +67,24 @@ For each exact symbol, behavior, or artifact:
 7. Estimate net reduction: code, tests dedicated only to that code, docs, config, generated artifacts, dependencies, and concepts removed minus replacement glue and migrations added.
 8. Name the smallest check that would fail if the simplification were wrong.
 
-Keep or downgrade a candidate when any of these holds:
+State decision-relevant evidence scope: revision and relevant worktree changes, supported configurations, included/excluded paths, and applicable external-consumer boundaries. Failed or truncated searches, missing/generated sources, stale indexes, incomplete pagination, and unavailable consumer evidence are unknowns, not zero matches. Resolve material gaps before claiming absence. Telemetry establishes only its observed window and environments, not the end of a support obligation.
 
-- A real production or external consumer exists.
-- Dynamic reachability or compatibility cannot be ruled out.
-- A current decision record justifies the surface and new evidence does not beat it.
-- Churn moves complexity elsewhere without shrinking the contract or number of truths.
-- The candidate is tiny, uncertain, or unrelated to the requested scope.
+Classify the cut before deciding:
+
+- **Unreachable deletion**: a supported consumer or material unresolved reachability path blocks deletion. A proven private, closed-world leaf does not require production telemetry or an irrelevant external-consumer survey.
+- **Contract-preserving simplification**: existing consumers are expected; preserve their affected supported observable contract, ownership, and compatibility obligations without claiming whole-program equivalence. A short wrapper may own authorization, transactions, error translation, or resource lifetime.
+- **Capability/compatibility retirement**: settle the authorized product decision and required migration before applying; lack of observed use alone does not authorize retirement.
+
+Mark candidates **eligible**, **needs evidence**, **requires decision**, or **rejected**. Only eligible cuts enter implementation ranking. Benefit or confidence cannot offset unresolved safety or compatibility obligations. Keep a candidate when current rationale still applies, complexity is merely relocated, or the change is too small or out of scope. A blocked candidate does not block independent proven cuts or evidence gathering.
 
 Track only enough evidence to support the decision. Use this compact record for substantial candidates; combine fields for simple ones:
 
 ```text
-[confidence / risk] candidate
-evidence: file/symbol locations; production consumers; dynamic/public/compatibility checks; owning rationale
-cut: exact code, artifacts, dependency, and concept removed
-tradeoff: observable capability or behavior lost
-verify: smallest decisive check; estimated net reduction
+[kind / status / risk] candidate
+evidence: revision and scope; exact locations; consumers/ownership/rationale; material unknowns
+cut: artifacts and concepts removed minus replacement and migration cost
+tradeoff: surviving contract; any capability or compatibility lost
+verify: independent baseline oracle; decisive check and result; net reduction
 ```
 
 ## Implement A Proven Cut
@@ -92,6 +96,10 @@ verify: smallest decisive check; estimated net reduction
 5. Prefer deletion, then standard library/native features, then already-installed dependencies. Add a dependency only when it removes more implementation and dedicated testing burden than its glue and supply-chain cost add.
 6. Avoid compatibility shims when there is no compatibility obligation. When one exists, keep the path or design an explicit migration instead of silently deleting it.
 7. Keep batches reviewable and reversible. Never discard unrelated user changes.
+
+Before a non-trivial live simplification, identify independent evidence of the surviving contract and a matched before/after check where feasible. Control or qualify clocks, randomness, and external responses. Record and separate known bugs unless the requested scope includes their repair; verify any explicitly authorized behavior delta against the intended contract. Deleting or weakening a failing test is not proof of equivalence. Remove tests only when their contract is intentionally retired or their surviving obligations are demonstrably covered independently; retain meaningful regressions.
+
+Treat applied migrations, persisted data, and historical compatibility fixtures as potential durable obligations, not dead code solely because current source has no callers. Follow supported upgrade, rollback, and retention policy and check representative old-data behavior before changing an obligation; policy-compliant archival or consolidation remains possible.
 
 Net-negative lines are evidence of a cut, not the goal. A safe simplification may add a small test or migration; a large deletion can still be wrong.
 
@@ -109,13 +117,17 @@ After each non-trivial batch:
 2. Run the narrowest decisive check, then required gates and broader checks justified by affected consumers, shared contracts, state, or unresolved risk. Reuse applicable evidence; do not run every suite by default. Add a test only when needed to establish the surviving behavior, not to mirror the edit.
 3. Re-run any static analyzer that produced the candidate.
 4. Run `git diff --check` when Git is available and inspect the complete diff for accidental scope expansion.
-5. Compare behavior at public, persisted, wire, and user-visible boundaries. Measure performance only if a performance claim is made.
+5. Compare behavior at public, persisted, wire, and user-visible boundaries. Check existing performance/resource contracts when affected (for example by removing a cache, index, copy, or batch), even without a speedup claim. Measure any claimed performance benefit; do not expand this into a general performance audit.
+
+Choose checks by the affected risk: a private leaf may need only a build and narrow tests; dynamic entrypoints need relevant registry/configuration coverage; public or persisted boundaries need compatibility fixtures; lifecycle changes need cancellation, reentrancy, ordering, and quiescence checks. Start with the cheapest check that could falsify the candidate, not an obligatory full suite.
+
+Record checks as **passed**, **failed**, **unavailable**, or **not run**, distinguishing preexisting baseline failures. Reuse evidence only while its affected code, dependencies, configuration, tool, and oracle assumptions remain valid; refresh the affected closure after later edits. When decisive verification is unavailable, leave contract-sensitive cuts proposed rather than verified. Low-risk local changes may remain reviewable under existing authorization with explicit limits; never report an unrun check as passed.
 
 If verification fails, identify whether the candidate was load-bearing, the implementation was incomplete, or the baseline was already red. Revert only the current batch or repair the proof; do not weaken a meaningful check to force the deletion through.
 
 ## Report The Outcome
 
-For an audit, rank the strongest candidates by confidence, risk, and net maintenance reduction. Include rejected or uncertain high-value candidates only when the missing evidence is actionable.
+For an audit, rank eligible candidates by evidence strength, risk, net maintenance reduction, and implementation/verification cost. Keep blocked candidates separate; do not invent a single entropy score. Include rejected or uncertain high-value candidates only when the missing evidence is actionable.
 
 Lead with the result in the user's language. Cite exact file/symbol evidence, distinguish confirmed facts from hypotheses, and state material coverage gaps. Use the repository's existing proposal format only when a durable record is requested or governed; otherwise report inline.
 
