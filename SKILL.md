@@ -2,7 +2,7 @@
 name: reclaim-code-entropy
 description: Find, rank, and implement evidence-backed simplifications of dead or abandoned code, duplicate state/APIs, unnecessary abstractions, and over-engineering. Use for repository simplification, deletion candidates, 代码化简、熵回收、清理冗余、收敛抽象 or 去除过度设计. Prove consumers, compatibility and ownership before removing code. Not a general bug or performance audit.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Reclaim Code Entropy
@@ -20,6 +20,16 @@ Use the workflow as decision guidance, scaled to the requested scope and impact.
 - Treat removal of a reachable user capability, supported public API, persisted format, or compatibility path as a product decision. Surface the visible tradeoff before changing it unless the user already made that decision explicitly.
 - Infer the mode from the whole request and prior authorization, not individual verbs. In apply mode, carry proven cuts through validation without seeking approval again for ordinary in-scope edits. Pause only the candidate requiring an unresolved product decision; continue independent authorized work.
 
+## Scale Evidence To The Cut
+
+Use the least costly evidence sufficient for the affected contract. These are routing examples, not mandatory stages or a numeric risk score:
+
+- **Local, closed-world cut:** a private leaf or pure forwarding layer with bounded callers and no external, durable, security or lifecycle duty. Inspect the relevant definitions and callers, perform a targeted reference check and the smallest decisive behavior/build check. A brief prose record is enough; no mandatory evidence JSON, inventory helper, full suite, telemetry, multi-agent review or recipe traversal.
+- **Shared or configuration-sensitive cut:** multiple owners/callers, dynamic registration, generated code, feature variants or a documented performance budget. Add the relevant entry/configuration coverage and affected integration checks; reuse unaffected evidence instead of restarting the entire audit.
+- **Boundary-sensitive cut:** public/wire/persisted compatibility, authorization, data loss, asynchronous ownership or resource release. Add independent boundary probes and the applicable compatibility/lifecycle checks. Capability retirement also needs its product decision; stronger tests cannot substitute for it.
+
+Escalate only when inspection exposes a material unknown, an actual obligation, or a failed decisive check. A short diff can be boundary-sensitive; many mechanical edits need not require unrelated checks. Downgrade effort when new evidence closes the affected scope. Stop gathering evidence once the applicable obligation is supported and required repository gates pass; record residual limits without pursuing unrelated possibilities. Never lower a real safety or compatibility obligation to meet a time budget: defer that cut and continue independent eligible work.
+
 ## Establish The Contract
 
 1. Read governing instructions and the nearest contract for the affected surface. Consult architecture, decisions, manifests, and test guidance where they bear on a candidate; do not read every repository document by default.
@@ -31,9 +41,9 @@ Do not simplify away validation at trust boundaries, authorization, security con
 
 ## Survey For Entropy
 
-Start with large or central production surfaces, not only obvious unused symbols. Use repository-native tools first: `rg --files`, `rg`, compiler/linter output, dependency manifests, and `git log`. Run installed dead-code or dependency tools when useful, but treat every result as a lead.
+Start with large or central production surfaces, not only obvious unused symbols. Use repository-native tools first: `rg --files`, `rg`, compiler/linter output, dependency manifests, and `git log`. Run installed dead-code or dependency tools when useful, but treat every result as a lead. Batch related literal searches when that avoids repeated traversal; preserve the same evidence scope. For repeatable scoped collection and invalidation, see [evidence records](references/evidence-records.md) and the optional helper; a bounded local cut does not require a new tracking system.
 
-Honor repository navigation rules, including a configured code graph. For a broad audit, map the requested domains and record inspected areas and coverage gaps; do not stop at the first easy deletion. For a bounded request, follow affected consumers without turning it into a repository-wide audit. Parallelize independent reads when useful; delegation follows host and governing task rules.
+Honor repository navigation rules, including a configured code graph. For a broad audit, map the requested domains and record inspected areas and coverage gaps; do not stop at the first easy deletion. For a bounded request, follow affected consumers without turning it into a repository-wide audit. Parallelize independent reads when useful; serialize changes and validation sharing an ownership boundary. Delegation follows host and governing task rules.
 
 Look for these candidate classes:
 
@@ -46,6 +56,8 @@ Look for these candidate classes:
 7. **Hand-rolled infrastructure**: local parsers, retry loops, globbing, framing, diffing, or data structures already covered by the standard library, native platform, or an installed dependency.
 8. **Support-only residue**: tests or docs are the only consumers; duplicate expected outputs; obsolete inventories; demo/test packages that impose runtime or publishing cost.
 9. **Added-then-abandoned residue**: implementation disappeared but flags, schemas, docs, tests, compatibility branches, or decision notes still describe it.
+
+When cycles or dynamic exports matter, trace reachability from the supported runtime roots, not caller counts: a mutually recursive island can be unreachable while a registry-only plugin remains live. Distinguish production roots from test/project roots and unresolved external consumers. Use an existing compiler, build graph or language-aware transform when it adds relevant evidence; do not install new infrastructure by default.
 
 Do not confuse duplication with necessary independence. Separate backends, adapters, representations, or lifecycle mechanisms may intentionally test a contract or protect distinct owners.
 
@@ -77,15 +89,20 @@ Classify the cut before deciding:
 
 Mark candidates **eligible**, **needs evidence**, **requires decision**, or **rejected**. Only eligible cuts enter implementation ranking. Benefit or confidence cannot offset unresolved safety or compatibility obligations. Keep a candidate when current rationale still applies, complexity is merely relocated, or the change is too small or out of scope. A blocked candidate does not block independent proven cuts or evidence gathering.
 
-Track only enough evidence to support the decision. Use this compact record for substantial candidates; combine fields for simple ones:
+Keep decision, implementation, and verification separate: `eligible` is not `applied` or `passed`. Track only enough evidence to support the decision. Use this compact record for substantial candidates; combine fields for simple ones:
 
 ```text
-[kind / status / risk] candidate
+[kind / risk] candidate
+decision: eligible | needs_evidence | requires_decision | rejected
+implementation: not_applied | applied | reverted
+verification: passed | failed | unavailable | not_run
 evidence: revision and scope; exact locations; consumers/ownership/rationale; material unknowns
 cut: artifacts and concepts removed minus replacement and migration cost
 tradeoff: surviving contract; any capability or compatibility lost
 verify: independent baseline oracle; decisive check and result; net reduction
 ```
+
+For non-trivial forwarding layers, mirrored state, or lifecycle changes, consult the relevant [proof recipe](references/proof-recipes.md). Use only the affected recipe; do not turn its checklist into mandatory unrelated work.
 
 ## Implement A Proven Cut
 
@@ -97,7 +114,7 @@ verify: independent baseline oracle; decisive check and result; net reduction
 6. Avoid compatibility shims when there is no compatibility obligation. When one exists, keep the path or design an explicit migration instead of silently deleting it.
 7. Keep batches reviewable and reversible. Never discard unrelated user changes.
 
-Before a non-trivial live simplification, identify independent evidence of the surviving contract and a matched before/after check where feasible. Control or qualify clocks, randomness, and external responses. Record and separate known bugs unless the requested scope includes their repair; verify any explicitly authorized behavior delta against the intended contract. Deleting or weakening a failing test is not proof of equivalence. Remove tests only when their contract is intentionally retired or their surviving obligations are demonstrably covered independently; retain meaningful regressions.
+Before a non-trivial live simplification, identify independent evidence of the surviving contract and a matched before/after check where feasible. Control or qualify clocks, randomness, and external responses. Where affected, check input access, side effects, evaluation count and ordering, defaults and public call forms, not just return values or exception types. Record and separate known bugs unless the requested scope includes their repair; verify any explicitly authorized behavior delta against the intended contract. Deleting or weakening a failing test is not proof of equivalence. Remove tests only when their contract is intentionally retired or their surviving obligations are demonstrably covered independently; retain meaningful regressions.
 
 Treat applied migrations, persisted data, and historical compatibility fixtures as potential durable obligations, not dead code solely because current source has no callers. Follow supported upgrade, rollback, and retention policy and check representative old-data behavior before changing an obligation; policy-compliant archival or consolidation remains possible.
 

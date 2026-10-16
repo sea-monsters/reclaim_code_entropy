@@ -1,0 +1,1 @@
+Use the assigned skill. Simplify app.py where justified by the supported contract. Inspect, implement safe changes, and verify. Preserve supported behavior. Report actual changes or retained candidates, exact executed checks/results, supporting skill files used, and relevant limitations.

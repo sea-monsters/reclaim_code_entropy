@@ -1,0 +1,10 @@
+{
+  "behavior": "passed",
+  "traces_checked": 364,
+  "max_trace_length": 5,
+  "concurrency_proof": false,
+  "repo_test_count": 3,
+  "repo_test_exit_code": 0,
+  "independent_diff_review": "passed",
+  "evidence_routing": "Lifecycle and mirrored-state recipes; added stop-with-inflight and finite transition probes; retained distinct admission and task ownership"
+}

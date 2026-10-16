@@ -1,0 +1,4 @@
+{
+  "skill_sha256": "6dd1a31874eedcba0b77bf018c193c0fd6ff84dba70f1be636e5d9b433828227",
+  "note": "Post-adaptive-routing revision; support-file tweaks may follow. Native workers read assigned frozen skill. Probes authored while candidate tasks were active from supplied contracts; not a preregistered benchmark."
+}

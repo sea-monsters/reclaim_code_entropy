@@ -1,0 +1,92 @@
+diff --git a/app.py b/app.py
+index 06891fa..ea04428 100644
+--- a/app.py
++++ b/app.py
+@@ -2,7 +2,6 @@ class Dispatcher:
+     def __init__(self):
+         self.stopping = False
+         self.pending = 0
+-        self.released = False
+ 
+     def begin(self):
+         if self.stopping:
+@@ -11,13 +10,12 @@ class Dispatcher:
+ 
+     def stop(self):
+         self.stopping = True
+-        self._refresh_release()
+ 
+     def finish(self):
+         if not self.pending:
+             raise RuntimeError('empty')
+         self.pending -= 1
+-        self._refresh_release()
+ 
+-    def _refresh_release(self):
+-        self.released = self.stopping and self.pending == 0
++    @property
++    def released(self):
++        return self.stopping and self.pending == 0
+diff --git a/test_app.py b/test_app.py
+index 945a953..8e2a279 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,8 +1,57 @@
++import itertools
+ import unittest
++
+ from app import Dispatcher
+ 
++
+ class DispatcherTests(unittest.TestCase):
+     def test_empty_stop(self):
+-        d=Dispatcher()
++        d = Dispatcher()
++        d.stop()
++        self.assertTrue(d.released)
++
++    def test_stop_waits_for_every_admitted_task(self):
++        d = Dispatcher()
++        d.begin()
++        d.begin()
++        d.stop()
++        self.assertFalse(d.released)
++        with self.assertRaisesRegex(RuntimeError, '^closed$'):
++            d.begin()
++        d.finish()
++        self.assertFalse(d.released)
++        d.stop()
++        self.assertFalse(d.released)
++        d.finish()
++        self.assertTrue(d.released)
+         d.stop()
+         self.assertTrue(d.released)
++
++    def test_supported_transition_sequences(self):
++        # Token ownership is an independent oracle for release eligibility.
++        for sequence in itertools.product(('begin', 'stop', 'finish'), repeat=6):
++            with self.subTest(sequence=sequence):
++                d = Dispatcher()
++                admitted = set()
++                closed = False
++                self.assertFalse(d.released)
++                for token, operation in enumerate(sequence):
++                    error = None
++                    if operation == 'begin':
++                        if closed:
++                            error = 'closed'
++                        else:
++                            admitted.add(token)
++                    elif operation == 'stop':
++                        closed = True
++                    elif not admitted:
++                        error = 'empty'
++                    else:
++                        admitted.pop()
++
++                    if error:
++                        with self.assertRaisesRegex(RuntimeError, f'^{error}$'):
++                            getattr(d, operation)()
++                    else:
++                        self.assertIsNone(getattr(d, operation)())
++                    self.assertEqual(d.released, closed and not admitted)

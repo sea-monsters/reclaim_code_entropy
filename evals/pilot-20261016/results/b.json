@@ -1,0 +1,34 @@
+{
+  "condition": "b1edaf023ae460975dd04d6df97f2b63ea2a0508",
+  "oracle": {
+    "denial_has_no_input_access": {
+      "passed": true
+    },
+    "permitted_evaluation_trace": {
+      "passed": true
+    },
+    "defaults_and_errors": {
+      "passed": true
+    },
+    "runtime_manifest_dispatch": {
+      "passed": true
+    },
+    "safe_cut_completed": {
+      "passed": true
+    },
+    "user_work_and_mode_preserved": {
+      "passed": true
+    }
+  },
+  "test_command": "python3 -B -m unittest discover -s tests -v",
+  "test_working_directory": "candidate repository root",
+  "tests_exit_code": 0,
+  "candidate_changed_paths": [
+    "parcel.py"
+  ],
+  "unrelated_preserved": true,
+  "independent_diff_review": "passed",
+  "historical_command_honesty": "Agent reports not independently transcript-verified; stored tests and oracle independently rerun",
+  "cost_metrics": "not recorded",
+  "repo_test_count": 2
+}

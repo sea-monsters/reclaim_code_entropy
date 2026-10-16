@@ -1,0 +1,8 @@
+test_empty_stop (test_app.DispatcherTests.test_empty_stop) ... ok
+test_stop_waits_for_every_admitted_task (test_app.DispatcherTests.test_stop_waits_for_every_admitted_task) ... ok
+test_supported_transition_sequences (test_app.DispatcherTests.test_supported_transition_sequences) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.011s
+
+OK

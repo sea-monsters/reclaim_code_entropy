@@ -1,0 +1,3 @@
+# Stored unified-diff evidence contains syntax-significant single-space context lines.
+# Do not treat those data lines as source whitespace errors.
+evals/pilot-20261016/**/*.patch -whitespace

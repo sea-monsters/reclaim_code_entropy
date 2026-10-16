@@ -1,0 +1,13 @@
+test_calls_strip_then_casefold_once_and_returns_result (test_parcel.ParcelTest.test_calls_strip_then_casefold_once_and_returns_result) ... ok
+test_casefold_error_propagates (test_parcel.ParcelTest.test_casefold_error_propagates) ... ok
+test_denied (test_parcel.ParcelTest.test_denied) ... ok
+test_denied_before_interacting_with_value (test_parcel.ParcelTest.test_denied_before_interacting_with_value) ... ok
+test_render (test_parcel.ParcelTest.test_render) ... ok
+test_render_signature (test_parcel.ParcelTest.test_render_signature) ... ok
+test_runtime_export_dispatch (test_parcel.ParcelTest.test_runtime_export_dispatch) ... ok
+test_strip_error_propagates (test_parcel.ParcelTest.test_strip_error_propagates) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK

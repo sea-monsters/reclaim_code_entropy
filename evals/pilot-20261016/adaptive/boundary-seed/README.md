@@ -1,0 +1,2 @@
+# Dispatcher lifecycle
+Python 3.10+ internal closed-world module. Dispatcher is supported. A task begins only while admissions are open; begin after stop raises RuntimeError('closed'). Stop closes admissions immediately, but resource release waits for every admitted task to finish. finish with no in-flight task raises RuntimeError('empty'). The released property is observable. Repeated stop is allowed. No dynamic loading, generated source or external consumers exist. Existing narrow check: `python3 -B -m unittest test_app`.

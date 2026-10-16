@@ -1,0 +1,11 @@
+diff --git a/app.py b/app.py
+index d4b47f7..77d701d 100644
+--- a/app.py
++++ b/app.py
+@@ -1,6 +1,2 @@
+-def _old_label(number):
+-    return 'obsolete-' + str(number)
+-
+-
+ def format_id(number):
+     return 'item-' + str(number)

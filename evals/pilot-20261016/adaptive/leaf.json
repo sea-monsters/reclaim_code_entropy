@@ -1,0 +1,8 @@
+{
+  "behavior": "passed",
+  "private_cut_completed": true,
+  "repo_test_count": 1,
+  "repo_test_exit_code": 0,
+  "independent_diff_review": "passed",
+  "evidence_routing": "Targeted references and one-test project suite, no reference recipes or inventory/helper; baseline repeated once using two equivalent commands"
+}

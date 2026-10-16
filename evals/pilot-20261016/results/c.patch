@@ -1,0 +1,21 @@
+diff --git a/parcel.py b/parcel.py
+index c50baaa..c94e5ea 100644
+--- a/parcel.py
++++ b/parcel.py
+@@ -1,15 +1,7 @@
+-def _obsolete_label(value):
+-    return "old-parcel:" + str(value)
+-
+-
+-def _adapt(value):
+-    return value.strip().casefold()
+-
+-
+ def render(value, permitted=False):
+     if not permitted:
+         raise PermissionError("blocked")
+-    return _adapt(value)
++    return value.strip().casefold()
+ 
+ 
+ def export(value):

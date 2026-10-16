@@ -1,0 +1,30 @@
+{
+  "README.md": {
+    "sha256": "ce8e9d5e1db4067b0e44856893ded577ee8a3a019c9dcfbd235354e461782707",
+    "mode": "0o644"
+  },
+  "parcel.py": {
+    "sha256": "1a73144300e6e0881abf6365ddbb6678e8a41c38ce057e47220dd02e0e492825",
+    "mode": "0o644"
+  },
+  ".runtime/commands.json": {
+    "sha256": "9a616d690c47e80f04eeb85a713d6f23491c28235ae58d654d16ed6d98fd1969",
+    "mode": "0o644"
+  },
+  "notes.txt": {
+    "sha256": "e12960ef4ef24a75efd0247421728c47ba15f027f2d5a84ea23a4f666c05cddb",
+    "mode": "0o644"
+  },
+  "bin/smoke": {
+    "sha256": "988be9754227e04d5eb65757650e7077a282fecf535ec7b3ee6ac706c0d0170d",
+    "mode": "0o755"
+  },
+  ".gitignore": {
+    "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "mode": "0o644"
+  },
+  "tests/test_parcel.py": {
+    "sha256": "0033f662eed3c2f72bf638aaff58be8723b54bceb316023bf18485ce01bcec7c",
+    "mode": "0o644"
+  }
+}

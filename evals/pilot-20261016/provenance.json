@@ -1,0 +1,19 @@
+{
+  "oracle_sha256": "f444d379f45a0192267906f55bfb78faa700d135c5ee0f6fd3bf117b6deff9e6",
+  "task_sha256": "f2b228e724edaa6794257423daf852b4f4541f0688a607a9814ee7563f7149b6",
+  "skills": {
+    "b": {
+      "revision": "b1edaf023ae460975dd04d6df97f2b63ea2a0508",
+      "skill_sha256": "54fd853c99c1f5beff331986c9f10a4269e088d9d648f18b3d408a0f3e21aceb"
+    },
+    "c": {
+      "revision": "cdf552191ca0621b50fad48badc8da594fe2c4ec",
+      "skill_sha256": "d4f6b4752c93fa62823b848c72c7d5f99de4707f31865f6419564ff29cc8753a"
+    },
+    "d": {
+      "revision": "pre-final 0.3 candidate; before adaptive-evidence section",
+      "skill_sha256": "611900e9a56b0021f3b4a57794195c608672b8ea2bb166ad9dfc62cbbc7ae09c"
+    }
+  },
+  "manifest_timing": "Recorded after early arms, rechecked after trials; not signed preregistration"
+}

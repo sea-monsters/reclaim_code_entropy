@@ -1,0 +1,108 @@
+diff --git a/parcel.py b/parcel.py
+index c50baaa..c94e5ea 100644
+--- a/parcel.py
++++ b/parcel.py
+@@ -1,15 +1,7 @@
+-def _obsolete_label(value):
+-    return "old-parcel:" + str(value)
+-
+-
+-def _adapt(value):
+-    return value.strip().casefold()
+-
+-
+ def render(value, permitted=False):
+     if not permitted:
+         raise PermissionError("blocked")
+-    return _adapt(value)
++    return value.strip().casefold()
+ 
+ 
+ def export(value):
+diff --git a/tests/test_parcel.py b/tests/test_parcel.py
+index 5c62702..5ebf602 100644
+--- a/tests/test_parcel.py
++++ b/tests/test_parcel.py
+@@ -1,9 +1,81 @@
++import importlib
++import inspect
++import json
++from pathlib import Path
+ import unittest
++from unittest.mock import Mock, call
++
+ from parcel import render
+ 
++
+ class ParcelTest(unittest.TestCase):
+     def test_render(self):
+         self.assertEqual(render(" Straße ", permitted=True), "strasse")
++
+     def test_denied(self):
+-        with self.assertRaises(PermissionError):
++        with self.assertRaisesRegex(PermissionError, "^blocked$"):
+             render(None)
++
++    def test_denied_before_interacting_with_value(self):
++        class Untouchable:
++            def __getattribute__(self, name):
++                raise AssertionError("value was inspected")
++
++            def __bool__(self):
++                raise AssertionError("value was tested")
++
++            def __str__(self):
++                raise AssertionError("value was converted")
++
++        for permission in (False, None, 0, "", [], {}):
++            with self.subTest(permission=permission):
++                with self.assertRaisesRegex(PermissionError, "^blocked$"):
++                    render(value=Untouchable(), permitted=permission)
++
++    def test_calls_strip_then_casefold_once_and_returns_result(self):
++        value = Mock()
++        result = object()
++        value.strip.return_value.casefold.return_value = result
++
++        self.assertIs(render(value=value, permitted="allowed"), result)
++        self.assertEqual(value.mock_calls, [call.strip(), call.strip().casefold()])
++
++    def test_strip_error_propagates(self):
++        value = Mock()
++        error = RuntimeError("strip failed")
++        value.strip.side_effect = error
++
++        with self.assertRaises(RuntimeError) as raised:
++            render(value, True)
++        self.assertIs(raised.exception, error)
++        self.assertEqual(value.mock_calls, [call.strip()])
++
++    def test_casefold_error_propagates(self):
++        value = Mock()
++        error = RuntimeError("casefold failed")
++        value.strip.return_value.casefold.side_effect = error
++
++        with self.assertRaises(RuntimeError) as raised:
++            render(value, True)
++        self.assertIs(raised.exception, error)
++        self.assertEqual(value.mock_calls, [call.strip(), call.strip().casefold()])
++
++    def test_render_signature(self):
++        self.assertEqual(str(inspect.signature(render)), "(value, permitted=False)")
++
++    def test_runtime_export_dispatch(self):
++        manifest = Path(__file__).resolve().parents[1] / ".runtime" / "commands.json"
++        commands = json.loads(manifest.read_text())
++        module_name, function_name = commands["export"].split(":")
++        export = getattr(importlib.import_module(module_name), function_name)
++        self.assertEqual(str(inspect.signature(export)), "(value)")
++
++        calls = []
++
++        class ExportValue:
++            def __str__(self):
++                calls.append("str")
++                return " Straße "
++
++        self.assertEqual(export(value=ExportValue()), "parcel: Straße ")
++        self.assertEqual(calls, ["str"])
